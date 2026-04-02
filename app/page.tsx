@@ -216,6 +216,10 @@ function OrgChartApp() {
             { label: 'Team Lead', color: '#10b981' },
             { label: 'HR / TA', color: '#f43f5e' },
             { label: 'Agent', color: '#0ea5e9' },
+            { label: 'Closer', color: '#f97316' },
+            { label: 'Senior Closer', color: '#ef4444' },
+            { label: 'Openers Trainer', color: '#06b6d4' },
+            { label: 'Closers Trainer', color: '#a855f7' },
           ] as const
         ).map(({ label, color }) => (
           <div key={label} className="flex items-center gap-2">

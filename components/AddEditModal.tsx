@@ -182,7 +182,7 @@ export function AddEditModal({ open, editingId, onClose }: AddEditModalProps) {
 
               {/* Role */}
               <Field label="Role">
-                <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5">
+                <div className="grid grid-cols-3 gap-1.5">
                   {ROLE_OPTIONS.map((role) => (
                     <button
                       key={role}
