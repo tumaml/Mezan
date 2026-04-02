@@ -1,14 +1,20 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import { TreeNode, ROLE_STYLES } from '@/types';
 import { NodeCard } from './NodeCard';
 import { useOrg } from '@/context/OrgContext';
 
-const NODE_W = 220;
-const NODE_H = 100;
-const H_GAP = 40;
-const V_GAP = 80;
+const NODE_W = 260;
+const NODE_H = 72;
+const H_GAP = 48;
+const V_GAP = 88;
 
 interface LayoutNode {
   node: TreeNode;
@@ -17,267 +23,216 @@ interface LayoutNode {
   children: LayoutNode[];
 }
 
-function computeSubtreeWidth(node: TreeNode): number {
+function subtreeWidth(node: TreeNode): number {
   if (node.children.length === 0) return NODE_W;
-  const childrenWidth = node.children.reduce(
-    (sum, child) => sum + computeSubtreeWidth(child) + H_GAP,
+  const childrenTotalW = node.children.reduce(
+    (sum, c) => sum + subtreeWidth(c) + H_GAP,
     -H_GAP
   );
-  return Math.max(NODE_W, childrenWidth);
+  return Math.max(NODE_W, childrenTotalW);
 }
 
 function layoutTree(node: TreeNode, x: number, y: number): LayoutNode {
-  const layoutNode: LayoutNode = { node, x, y, children: [] };
+  const ln: LayoutNode = { node, x, y, children: [] };
+  if (node.children.length === 0) return ln;
 
-  if (node.children.length === 0) return layoutNode;
-
-  const totalChildWidth = node.children.reduce(
-    (sum, child) => sum + computeSubtreeWidth(child) + H_GAP,
-    -H_GAP
-  );
-  let childX = x - totalChildWidth / 2;
-  const childY = y + NODE_H + V_GAP;
+  const total = node.children.reduce((s, c) => s + subtreeWidth(c) + H_GAP, -H_GAP);
+  let cx = x - total / 2;
+  const cy = y + NODE_H + V_GAP;
 
   for (const child of node.children) {
-    const subtreeWidth = computeSubtreeWidth(child);
-    const centerX = childX + subtreeWidth / 2;
-    layoutNode.children.push(layoutTree(child, centerX, childY));
-    childX += subtreeWidth + H_GAP;
+    const cw = subtreeWidth(child);
+    ln.children.push(layoutTree(child, cx + cw / 2, cy));
+    cx += cw + H_GAP;
   }
-
-  return layoutNode;
+  return ln;
 }
 
-function flattenLayout(layout: LayoutNode): LayoutNode[] {
-  const result: LayoutNode[] = [layout];
-  for (const child of layout.children) {
-    result.push(...flattenLayout(child));
-  }
-  return result;
+function flatten(ln: LayoutNode): LayoutNode[] {
+  return [ln, ...ln.children.flatMap(flatten)];
 }
 
-function collectEdges(
-  layout: LayoutNode
-): Array<{ x1: number; y1: number; x2: number; y2: number; color: string }> {
-  const edges: Array<{ x1: number; y1: number; x2: number; y2: number; color: string }> = [];
-  const parentColor = ROLE_STYLES[layout.node.role].color;
-  for (const child of layout.children) {
-    edges.push({
-      x1: layout.x,
-      y1: layout.y + NODE_H,
-      x2: child.x,
-      y2: child.y,
-      color: parentColor,
-    });
+interface Edge {
+  x1: number; y1: number;
+  x2: number; y2: number;
+  color: string;
+}
+
+function collectEdges(ln: LayoutNode): Edge[] {
+  const edges: Edge[] = [];
+  const pc = ROLE_STYLES[ln.node.role].color;
+  for (const child of ln.children) {
+    edges.push({ x1: ln.x, y1: ln.y + NODE_H, x2: child.x, y2: child.y, color: pc });
     edges.push(...collectEdges(child));
   }
   return edges;
 }
 
-function getBounds(flatNodes: LayoutNode[]) {
-  let minX = Infinity,
-    maxX = -Infinity,
-    minY = Infinity,
-    maxY = -Infinity;
-  for (const { x, y } of flatNodes) {
-    minX = Math.min(minX, x - NODE_W / 2);
-    maxX = Math.max(maxX, x + NODE_W / 2);
-    minY = Math.min(minY, y);
-    maxY = Math.max(maxY, y + NODE_H);
+function bounds(nodes: LayoutNode[]) {
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (const { x, y } of nodes) {
+    x0 = Math.min(x0, x - NODE_W / 2);
+    x1 = Math.max(x1, x + NODE_W / 2);
+    y0 = Math.min(y0, y);
+    y1 = Math.max(y1, y + NODE_H);
   }
-  return { minX, maxX, minY, maxY, w: maxX - minX, h: maxY - minY };
+  return { x0, x1, y0, y1, w: x1 - x0, h: y1 - y0 };
 }
 
 export interface OrgTreeHandle {
   centerView: () => void;
 }
 
-interface OrgTreeProps {
-  onAddClick: () => void;
-}
+export const OrgTree = forwardRef<OrgTreeHandle, { onAddClick: () => void }>(
+  function OrgTree({ onAddClick }, ref) {
+    const { buildTree, selectedNodeId, setSelectedNodeId, getChildren } = useOrg();
 
-export const OrgTree = forwardRef<OrgTreeHandle, OrgTreeProps>(function OrgTree(
-  { onAddClick },
-  ref
-) {
-  const { buildTree, selectedNodeId, setSelectedNodeId, getChildren } = useOrg();
+    const wrapRef = useRef<HTMLDivElement>(null);
+    const transform = useRef({ x: 0, y: 0, scale: 1 });
+    const innerRef = useRef<HTMLDivElement>(null);
+    const isPanning = useRef(false);
+    const lastMouse = useRef({ x: 0, y: 0 });
 
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
-  const isPanning = useRef(false);
-  const lastMouse = useRef({ x: 0, y: 0 });
+    const applyTransform = useCallback(() => {
+      if (!innerRef.current) return;
+      const { x, y, scale } = transform.current;
+      innerRef.current.style.transform = `translate(${x}px,${y}px) scale(${scale})`;
+    }, []);
 
-  const roots = buildTree();
-  const allLayouts: LayoutNode[] = [];
-  const rootLayouts: LayoutNode[] = [];
+    const roots = buildTree();
+    const rootLayouts: LayoutNode[] = [];
+    let rx = 0;
+    for (const root of roots) {
+      const w = subtreeWidth(root);
+      rootLayouts.push(layoutTree(root, rx + w / 2, 0));
+      rx += w + H_GAP * 2;
+    }
+    const allNodes = rootLayouts.flatMap(flatten);
+    const allEdges = rootLayouts.flatMap(collectEdges);
+    const b = allNodes.length > 0 ? bounds(allNodes) : null;
 
-  let rootOffset = 0;
-  for (const root of roots) {
-    const w = computeSubtreeWidth(root);
-    const layout = layoutTree(root, rootOffset + w / 2, 0);
-    rootLayouts.push(layout);
-    allLayouts.push(...flattenLayout(layout));
-    rootOffset += w + H_GAP * 2;
-  }
-
-  const bounds = allLayouts.length > 0 ? getBounds(allLayouts) : null;
-
-  const centerView = useCallback(() => {
-    if (!bounds || !canvasRef.current) return;
-    const rect = canvasRef.current.getBoundingClientRect();
-    const scaleX = (rect.width * 0.85) / bounds.w;
-    const scaleY = (rect.height * 0.85) / bounds.h;
-    const scale = Math.min(Math.max(Math.min(scaleX, scaleY), 0.3), 1.2);
-    const x = rect.width / 2 - (bounds.minX + bounds.w / 2) * scale;
-    const y = rect.height / 2 - (bounds.minY + bounds.h / 2) * scale + 20;
-    setTransform({ x, y, scale });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bounds?.minX, bounds?.minY, bounds?.w, bounds?.h]);
-
-  useImperativeHandle(ref, () => ({ centerView }), [centerView]);
-
-  useEffect(() => {
-    centerView();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleWheel = useCallback((e: WheelEvent) => {
-    e.preventDefault();
-    const factor = e.deltaY < 0 ? 1.1 : 0.9;
-    setTransform((prev) => {
-      const newScale = Math.min(Math.max(prev.scale * factor, 0.2), 2.5);
-      const rect = canvasRef.current?.getBoundingClientRect();
-      if (!rect) return prev;
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      const wx = (mx - prev.x) / prev.scale;
-      const wy = (my - prev.y) / prev.scale;
-      return {
-        scale: newScale,
-        x: mx - wx * newScale,
-        y: my - wy * newScale,
+    const centerView = useCallback(() => {
+      if (!b || !wrapRef.current) return;
+      const rect = wrapRef.current.getBoundingClientRect();
+      const sx = (rect.width * 0.88) / b.w;
+      const sy = (rect.height * 0.88) / b.h;
+      const scale = Math.min(Math.max(Math.min(sx, sy), 0.25), 1.1);
+      transform.current = {
+        scale,
+        x: rect.width / 2 - (b.x0 + b.w / 2) * scale,
+        y: Math.max(40, rect.height / 2 - (b.y0 + b.h / 2) * scale),
       };
-    });
-  }, []);
+      applyTransform();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [b?.x0, b?.y0, b?.w, b?.h, applyTransform]);
 
-  useEffect(() => {
-    const el = canvasRef.current;
-    if (!el) return;
-    el.addEventListener('wheel', handleWheel, { passive: false });
-    return () => el.removeEventListener('wheel', handleWheel);
-  }, [handleWheel]);
+    useImperativeHandle(ref, () => ({ centerView }), [centerView]);
 
-  const onMouseDown = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('[data-node]')) return;
-    isPanning.current = true;
-    lastMouse.current = { x: e.clientX, y: e.clientY };
-    e.preventDefault();
-  };
+    useEffect(() => {
+      centerView();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (!isPanning.current) return;
-    const dx = e.clientX - lastMouse.current.x;
-    const dy = e.clientY - lastMouse.current.y;
-    lastMouse.current = { x: e.clientX, y: e.clientY };
-    setTransform((prev) => ({ ...prev, x: prev.x + dx, y: prev.y + dy }));
-  };
+    useEffect(() => {
+      const el = wrapRef.current;
+      if (!el) return;
+      const onWheel = (e: WheelEvent) => {
+        e.preventDefault();
+        const factor = e.deltaY < 0 ? 1.1 : 0.91;
+        const rect = el.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const prev = transform.current;
+        const newScale = Math.min(Math.max(prev.scale * factor, 0.2), 2.5);
+        const wx = (mx - prev.x) / prev.scale;
+        const wy = (my - prev.y) / prev.scale;
+        transform.current = { scale: newScale, x: mx - wx * newScale, y: my - wy * newScale };
+        applyTransform();
+      };
+      el.addEventListener('wheel', onWheel, { passive: false });
+      return () => el.removeEventListener('wheel', onWheel);
+    }, [applyTransform]);
 
-  const stopPan = () => {
-    isPanning.current = false;
-  };
+    const onMouseDown = (e: React.MouseEvent) => {
+      if ((e.target as HTMLElement).closest('[data-node]')) return;
+      isPanning.current = true;
+      lastMouse.current = { x: e.clientX, y: e.clientY };
+    };
 
-  const allEdges = rootLayouts.flatMap(collectEdges);
+    const onMouseMove = (e: React.MouseEvent) => {
+      if (!isPanning.current) return;
+      const dx = e.clientX - lastMouse.current.x;
+      const dy = e.clientY - lastMouse.current.y;
+      lastMouse.current = { x: e.clientX, y: e.clientY };
+      transform.current.x += dx;
+      transform.current.y += dy;
+      applyTransform();
+    };
 
-  return (
-    <div
-      ref={canvasRef}
-      className="w-full h-full overflow-hidden cursor-grab active:cursor-grabbing"
-      onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseUp={stopPan}
-      onMouseLeave={stopPan}
-    >
+    const stopPan = () => { isPanning.current = false; };
+
+    return (
       <div
-        style={{
-          transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`,
-          transformOrigin: '0 0',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          willChange: 'transform',
-        }}
+        ref={wrapRef}
+        className="w-full h-full overflow-hidden cursor-grab active:cursor-grabbing"
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={stopPan}
+        onMouseLeave={stopPan}
       >
-        {/* SVG connector lines */}
-        <svg
-          style={{ position: 'absolute', top: 0, left: 0, overflow: 'visible', pointerEvents: 'none' }}
-          width="1"
-          height="1"
+        <div
+          ref={innerRef}
+          style={{ position: 'absolute', top: 0, left: 0, transformOrigin: '0 0', willChange: 'transform' }}
         >
-          <defs>
-            {Object.entries(ROLE_STYLES).map(([role, s]) => (
-              <filter key={role} id={`glow-${role.replace(/\//g, '-').replace(/\s/g, '-')}`}>
-                <feGaussianBlur stdDeviation="2" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            ))}
-          </defs>
-          {allEdges.map((edge, i) => {
-            const mx = edge.x1;
-            const my = (edge.y1 + edge.y2) / 2;
-            const d = `M ${edge.x1} ${edge.y1} C ${mx} ${my}, ${edge.x2} ${my}, ${edge.x2} ${edge.y2}`;
-            return (
-              <path
-                key={i}
-                d={d}
-                fill="none"
-                stroke={edge.color}
-                strokeOpacity={0.25}
-                strokeWidth={1.5}
-              />
-            );
-          })}
-        </svg>
+          {/* Connectors */}
+          <svg style={{ position: 'absolute', top: 0, left: 0, overflow: 'visible', pointerEvents: 'none' }} width="1" height="1">
+            {allEdges.map((e, i) => {
+              const midY = (e.y1 + e.y2) / 2;
+              const d = `M${e.x1},${e.y1} C${e.x1},${midY} ${e.x2},${midY} ${e.x2},${e.y2}`;
+              return (
+                <path
+                  key={i}
+                  d={d}
+                  fill="none"
+                  stroke={e.color}
+                  strokeOpacity={0.2}
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                />
+              );
+            })}
+          </svg>
 
-        {/* Node cards */}
-        {allLayouts.map(({ node, x, y }) => {
-          const directReports = getChildren(node.id).length;
-          return (
+          {/* Nodes */}
+          {allNodes.map(({ node, x, y }) => (
             <div
               key={node.id}
-              data-node="true"
-              style={{
-                position: 'absolute',
-                left: x - NODE_W / 2,
-                top: y,
-                width: NODE_W,
-              }}
+              style={{ position: 'absolute', left: x - NODE_W / 2, top: y, width: NODE_W }}
             >
               <NodeCard
                 node={node}
                 isSelected={selectedNodeId === node.id}
-                onClick={() => setSelectedNodeId(node.id === selectedNodeId ? null : node.id)}
-                directReportsCount={directReports}
+                onClick={() => setSelectedNodeId(selectedNodeId === node.id ? null : node.id)}
+                directReportsCount={getChildren(node.id).length}
               />
             </div>
-          );
-        })}
-      </div>
-
-      {/* Empty state */}
-      {allLayouts.length === 0 && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-          <p className="text-white/30 text-sm">No team members yet.</p>
-          <button
-            onClick={onAddClick}
-            className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-sm transition-colors"
-          >
-            Add first person
-          </button>
+          ))}
         </div>
-      )}
-    </div>
-  );
-});
+
+        {/* Empty state */}
+        {allNodes.length === 0 && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+            <p className="text-white/20 text-sm">No team members yet</p>
+            <button
+              onClick={onAddClick}
+              className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+              style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)' }}
+            >
+              + Add first person
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+);
