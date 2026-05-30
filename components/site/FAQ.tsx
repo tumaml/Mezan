@@ -11,7 +11,7 @@ const FAQS = [
   },
   {
     q: 'Does Mezan sync with our HR system?',
-    a: 'Yes. The Growth and Enterprise plans connect to popular HRIS platforms so hires, role changes, and departures flow into your chart in real time. Your org map is never out of date.',
+    a: 'Yes. The Growth and Enterprise plans connect to popular HRIS platforms, so hires, role changes, and departures flow into your chart in real time. Your org map is never out of date.',
   },
   {
     q: 'Is my company data secure?',
@@ -22,28 +22,31 @@ const FAQS = [
     a: 'Absolutely. Generate a read-only link or embed the live chart in your wiki. Viewers always see the latest structure without needing to sign in.',
   },
   {
-    q: 'What happens when I hit the Starter limit?',
-    a: 'Nothing breaks — we’ll simply prompt you to upgrade when you pass 25 people. You can move to Growth at any time and keep all of your existing data.',
+    q: 'What happens when I outgrow the Starter plan?',
+    a: 'Nothing breaks — we simply prompt you to upgrade once you pass 25 people. Move to Growth whenever you’re ready and keep all of your existing data.',
   },
 ];
 
-function Item({ q, a }: { q: string; a: string }) {
+function Item({ q, a, n }: { q: string; a: string; n: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="surface overflow-hidden">
+    <div className="border-b border-line">
       <button
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left"
+        className="flex w-full items-center gap-5 py-6 text-left"
       >
-        <span className="text-[15px] font-medium text-white">{q}</span>
+        <span className="font-mono text-[12px] text-faint">{n}</span>
+        <span className="font-display flex-1 text-[19px] font-medium leading-snug text-ink">{q}</span>
         <span
-          className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-violet-300 transition-transform duration-300"
-          style={{ background: 'rgba(139,92,246,0.12)', transform: open ? 'rotate(45deg)' : 'none' }}
+          className="relative flex h-5 w-5 flex-shrink-0 items-center justify-center text-ink"
+          aria-hidden="true"
         >
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-            <path d="M6.5 1.5v10M1.5 6.5h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
+          <span className="absolute h-px w-3.5 bg-current" />
+          <span
+            className="absolute h-3.5 w-px bg-current transition-transform duration-300"
+            style={{ transform: open ? 'scaleY(0)' : 'scaleY(1)' }}
+          />
         </span>
       </button>
       <AnimatePresence initial={false}>
@@ -53,8 +56,9 @@ function Item({ q, a }: { q: string; a: string }) {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
+            className="overflow-hidden"
           >
-            <p className="px-5 pb-5 text-sm leading-relaxed text-zinc-400">{a}</p>
+            <p className="max-w-2xl pb-6 pl-9 text-[15px] leading-relaxed text-muted">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -64,12 +68,16 @@ function Item({ q, a }: { q: string; a: string }) {
 
 export function FAQ() {
   return (
-    <section id="faq" className="relative px-4 py-24 scroll-mt-24">
-      <SectionHeading eyebrow="FAQ" title="Questions, answered" />
-      <div className="mx-auto mt-12 grid max-w-3xl gap-3">
-        {FAQS.map((f) => (
-          <Item key={f.q} {...f} />
-        ))}
+    <section id="faq" className="scroll-mt-24 px-5 py-24 sm:px-8">
+      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[0.65fr_1.35fr] lg:gap-20">
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <SectionHeading index="§ 04" kicker="FAQ" title={<>Questions, answered.</>} />
+        </div>
+        <div className="border-t border-line">
+          {FAQS.map((f, i) => (
+            <Item key={f.q} n={`0${i + 1}`} {...f} />
+          ))}
+        </div>
       </div>
     </section>
   );

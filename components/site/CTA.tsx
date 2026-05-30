@@ -3,42 +3,30 @@ import { Reveal } from './Reveal';
 
 export function CTA() {
   return (
-    <section id="contact" className="relative px-4 py-24 scroll-mt-24">
-      <Reveal className="mx-auto max-w-5xl">
-        <div
-          className="relative overflow-hidden rounded-[2rem] px-6 py-16 text-center sm:px-12 sm:py-20"
-          style={{
-            background: 'linear-gradient(150deg, rgba(124,58,237,0.25), rgba(34,211,238,0.12))',
-            border: '1px solid rgba(255,255,255,0.12)',
-          }}
-        >
-          <div
-            className="animate-aurora pointer-events-none absolute -top-1/2 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full opacity-60 blur-[100px]"
-            style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.7), transparent 60%)' }}
-          />
-          <div className="bg-dotgrid pointer-events-none absolute inset-0 opacity-50" />
-
-          <div className="relative">
-            <h2 className="mx-auto max-w-2xl text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">
-              Your org chart shouldn&apos;t be a mystery.
+    <section id="contact" className="scroll-mt-24 px-5 py-20 sm:px-8">
+      <Reveal className="mx-auto max-w-6xl">
+        <div className="grain relative overflow-hidden rounded-2xl bg-ink px-7 py-20 text-paper sm:px-16 sm:py-28">
+          <div className="relative max-w-3xl">
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-paper/45">
+              Get started
+            </span>
+            <h2 className="font-display mt-6 text-[clamp(2.2rem,5vw,4rem)] font-medium leading-[1.02] tracking-[-0.02em]">
+              Your org chart shouldn&apos;t be a{' '}
+              <span className="italic font-normal text-accent">mystery</span>.
             </h2>
-            <p className="mx-auto mt-5 max-w-xl text-pretty text-lg text-zinc-300">
-              Join the teams who replaced stale spreadsheets with a living map. Free to start, minutes to set up.
+            <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-paper/65">
+              Join the teams who replaced stale spreadsheets with a living map.
+              Free to start, minutes to set up, yours to share.
             </p>
-            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
               <Link
                 href="/app"
-                className="group w-full rounded-xl px-7 py-3.5 text-center text-[15px] font-semibold text-white transition-transform active:scale-[0.98] sm:w-auto"
-                style={{ background: 'linear-gradient(120deg, #7c3aed, #6366f1)', boxShadow: '0 16px 44px -12px rgba(124,58,237,0.8)' }}
+                className="group inline-flex items-center gap-2 rounded-full bg-paper px-6 py-3 text-[14px] font-medium text-ink transition-colors hover:bg-white"
               >
                 Launch the app
-                <span className="ml-1.5 inline-block transition-transform group-hover:translate-x-1">→</span>
+                <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </Link>
-              <a
-                href="#pricing"
-                className="w-full rounded-xl px-7 py-3.5 text-center text-[15px] font-semibold text-white transition-colors sm:w-auto"
-                style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.16)' }}
-              >
+              <a href="#pricing" className="text-[14px] font-medium text-paper/80 underline-offset-4 hover:text-paper hover:underline">
                 Compare plans
               </a>
             </div>

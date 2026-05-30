@@ -3,51 +3,42 @@ import { SectionHeading } from './SectionHeading';
 
 const STEPS = [
   {
-    n: '01',
+    n: '1',
     title: 'Import your people',
-    body: 'Upload a CSV, sync your HRIS, or start from scratch. Mezan builds the first draft of your chart in seconds.',
+    body: 'Upload a CSV, sync your HRIS, or start from a blank canvas. Mezan drafts the first version of your chart in seconds.',
   },
   {
-    n: '02',
+    n: '2',
     title: 'Shape the structure',
-    body: 'Drag to re-org, add roles, and split departments. Every change recalculates headcount and reporting lines live.',
+    body: 'Drag to re-org, add roles, split departments. Every change recalculates headcount and reporting lines instantly.',
   },
   {
-    n: '03',
-    title: 'Share & decide',
-    body: 'Send a link or embed the chart. Everyone sees the same source of truth — and you plan your next move with confidence.',
+    n: '3',
+    title: 'Share and decide',
+    body: 'Send a link or embed the chart. Everyone sees one source of truth — and you plan the next move with confidence.',
   },
 ];
 
 export function HowItWorks() {
   return (
-    <section id="how" className="relative px-4 py-24 scroll-mt-24">
+    <section id="how" className="scroll-mt-24 px-5 py-24 sm:px-8">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
-          eyebrow="How it works"
-          title={<>From spreadsheet chaos to <span className="gradient-text">clarity</span> in three steps</>}
+          index="§ 02"
+          kicker="How it works"
+          title={<>From spreadsheet chaos to clarity, in three moves.</>}
+          align="center"
         />
 
-        <div className="relative mt-16 grid gap-8 md:grid-cols-3">
-          {/* connecting line */}
-          <div
-            className="absolute left-0 right-0 top-7 hidden h-px md:block"
-            style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.12) 15%, rgba(255,255,255,0.12) 85%, transparent)' }}
-          />
+        <div className="mt-16 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3">
           {STEPS.map((s, i) => (
-            <Reveal key={s.n} delay={i * 0.1}>
-              <div className="relative">
-                <div
-                  className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl font-mono text-lg font-bold text-white"
-                  style={{
-                    background: 'linear-gradient(160deg, rgba(124,58,237,0.9), rgba(99,102,241,0.7))',
-                    boxShadow: '0 10px 30px -10px rgba(124,58,237,0.7)',
-                  }}
-                >
-                  {s.n}
-                </div>
-                <h3 className="mt-6 text-xl font-semibold text-white">{s.title}</h3>
-                <p className="mt-2.5 text-[15px] leading-relaxed text-zinc-400">{s.body}</p>
+            <Reveal key={s.n} delay={i * 0.08}>
+              <div className="h-full bg-paper p-8">
+                <span className="font-display text-5xl font-medium leading-none text-ink/15">
+                  0{s.n}
+                </span>
+                <h3 className="font-display mt-6 text-xl font-medium text-ink">{s.title}</h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-muted">{s.body}</p>
               </div>
             </Reveal>
           ))}

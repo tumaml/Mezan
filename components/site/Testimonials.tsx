@@ -1,83 +1,58 @@
 import { Reveal } from './Reveal';
-import { SectionHeading } from './SectionHeading';
 
-type Quote = {
-  body: string;
-  name: string;
-  role: string;
-  initials: string;
-  color: string;
+const FEATURED = {
+  body: 'Onboarding used to mean a week of “who do I even ask about this?” Now new hires open Mezan and just get it. It’s the first internal tool the whole company has actually complimented.',
+  name: 'Amara Boateng',
+  role: 'Head of People, Northwind',
 };
 
-const QUOTES: Quote[] = [
+const SUPPORTING = [
   {
-    body: 'Onboarding used to mean a week of “who do I ask about this?” Now new hires open Mezan and just get it. Our time-to-productivity dropped noticeably.',
-    name: 'Amara Boateng',
-    role: 'Head of People, Northwind',
-    initials: 'AB',
-    color: '#a78bfa',
-  },
-  {
-    body: 'We replaced three stale spreadsheets and a Lucidchart graveyard with one Mezan link. Planning our Series B headcount took an afternoon, not a quarter.',
+    body: 'We replaced three stale spreadsheets and a Lucidchart graveyard with one link. Planning our Series B headcount took an afternoon, not a quarter.',
     name: 'Diego Salas',
     role: 'COO, Voltaic',
-    initials: 'DS',
-    color: '#22d3ee',
   },
   {
     body: 'The HRIS sync is the killer feature. The chart is never wrong, so leadership finally trusts it for real decisions.',
     name: 'Priya Nair',
     role: 'VP Operations, Meridian',
-    initials: 'PN',
-    color: '#f59e0b',
-  },
-  {
-    body: 'Gorgeous, fast, and genuinely useful. It is rare that an internal tool gets compliments from the whole company.',
-    name: 'Tom Vesely',
-    role: 'CEO, Everpeak',
-    initials: 'TV',
-    color: '#34d399',
   },
 ];
 
 export function Testimonials() {
   return (
-    <section className="relative px-4 py-24">
-      <SectionHeading
-        eyebrow="Loved by teams"
-        title={<>Don&apos;t take our word for it</>}
-        subtitle="People leaders and operators use Mezan to keep everyone aligned as they scale."
-      />
+    <section className="px-5 py-24 sm:px-8">
+      <div className="mx-auto max-w-6xl">
+        <Reveal>
+          <span className="kicker">Field notes</span>
+        </Reveal>
 
-      <div className="mx-auto mt-14 grid max-w-6xl gap-4 md:grid-cols-2">
-        {QUOTES.map((q, i) => (
-          <Reveal key={q.name} delay={(i % 2) * 0.08}>
-            <figure className="surface surface-hover flex h-full flex-col p-7">
-              <div className="mb-4 flex gap-0.5 text-amber-400" aria-hidden="true">
-                {Array.from({ length: 5 }).map((_, s) => (
-                  <svg key={s} width="15" height="15" viewBox="0 0 15 15" fill="currentColor">
-                    <path d="M7.5 1l1.8 3.9 4.2.5-3.1 2.9.8 4.2L7.5 10.4 3.8 12.4l.8-4.2L1.5 5.4l4.2-.5L7.5 1Z" />
-                  </svg>
-                ))}
-              </div>
-              <blockquote className="flex-1 text-[15px] leading-relaxed text-zinc-200">
-                “{q.body}”
-              </blockquote>
-              <figcaption className="mt-6 flex items-center gap-3">
-                <span
-                  className="flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-black"
-                  style={{ background: q.color }}
-                >
-                  {q.initials}
-                </span>
-                <span>
-                  <span className="block text-sm font-semibold text-white">{q.name}</span>
-                  <span className="block text-xs text-zinc-400">{q.role}</span>
-                </span>
-              </figcaption>
-            </figure>
-          </Reveal>
-        ))}
+        <Reveal delay={0.05}>
+          <figure className="mt-8 max-w-4xl">
+            <blockquote className="font-display text-[clamp(1.6rem,3.4vw,2.6rem)] font-normal leading-[1.22] tracking-[-0.01em] text-ink">
+              <span className="text-accent">“</span>
+              {FEATURED.body}
+            </blockquote>
+            <figcaption className="mt-7 flex items-center gap-3 font-mono text-[12px] uppercase tracking-wider text-faint">
+              <span className="h-px w-8 bg-line" />
+              <span className="text-ink-soft">{FEATURED.name}</span>
+              <span>· {FEATURED.role}</span>
+            </figcaption>
+          </figure>
+        </Reveal>
+
+        <div className="mt-16 grid gap-px overflow-hidden border-t border-line md:grid-cols-2 md:gap-12 md:border-0">
+          {SUPPORTING.map((q, i) => (
+            <Reveal key={q.name} delay={i * 0.08}>
+              <figure className="border-b border-line py-8 md:border-b-0 md:py-0">
+                <blockquote className="text-[17px] leading-relaxed text-ink-soft">{q.body}</blockquote>
+                <figcaption className="mt-5 font-mono text-[12px] uppercase tracking-wider text-faint">
+                  <span className="text-ink-soft">{q.name}</span> · {q.role}
+                </figcaption>
+              </figure>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );

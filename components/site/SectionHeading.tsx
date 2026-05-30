@@ -1,37 +1,35 @@
 import { Reveal } from './Reveal';
 
 export function SectionHeading({
-  eyebrow,
+  index,
+  kicker,
   title,
   subtitle,
-  align = 'center',
+  align = 'left',
 }: {
-  eyebrow: string;
+  index?: string;
+  kicker: string;
   title: React.ReactNode;
   subtitle?: string;
   align?: 'center' | 'left';
 }) {
-  const alignCls = align === 'center' ? 'text-center mx-auto' : 'text-left';
+  const isCenter = align === 'center';
   return (
-    <div className={`max-w-2xl ${alignCls}`}>
+    <div className={isCenter ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'}>
       <Reveal>
-        <span
-          className="inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider text-violet-300"
-          style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.22)' }}
-        >
-          {eyebrow}
-        </span>
+        <div className={`flex items-center gap-3 ${isCenter ? 'justify-center' : ''}`}>
+          {index && <span className="font-mono text-[12px] text-faint">{index}</span>}
+          <span className="kicker">{kicker}</span>
+        </div>
       </Reveal>
       <Reveal delay={0.05}>
-        <h2 className="mt-5 text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+        <h2 className="font-display mt-4 text-[clamp(1.9rem,4vw,2.9rem)] font-medium leading-[1.04] tracking-[-0.015em] text-ink">
           {title}
         </h2>
       </Reveal>
       {subtitle && (
         <Reveal delay={0.1}>
-          <p className={`mt-4 text-pretty text-base leading-relaxed text-zinc-400 ${align === 'center' ? 'mx-auto' : ''}`}>
-            {subtitle}
-          </p>
+          <p className="mt-5 text-[16px] leading-relaxed text-muted">{subtitle}</p>
         </Reveal>
       )}
     </div>

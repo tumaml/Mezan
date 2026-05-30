@@ -16,105 +16,84 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-3 sm:pt-4">
-      <nav
-        className="flex w-full max-w-6xl items-center justify-between rounded-2xl px-4 py-2.5 transition-all duration-300 sm:px-5"
-        style={{
-          background: scrolled ? 'rgba(12,12,18,0.72)' : 'rgba(12,12,18,0.35)',
-          border: `1px solid ${scrolled ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)'}`,
-          backdropFilter: 'blur(16px)',
-          boxShadow: scrolled ? '0 12px 40px -12px rgba(0,0,0,0.6)' : 'none',
-        }}
-      >
+    <header
+      className="fixed inset-x-0 top-0 z-50 transition-colors duration-300"
+      style={{
+        background: scrolled ? 'rgba(244,242,235,0.85)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(10px)' : 'none',
+        borderBottom: `1px solid ${scrolled ? 'var(--color-line)' : 'transparent'}`,
+      }}
+    >
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
         <Link href="/" aria-label="Mezan home">
           <Logo />
         </Link>
 
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="rounded-lg px-3 py-1.5 text-sm text-zinc-400 transition-colors hover:text-white"
-            >
+            <a key={l.href} href={l.href} className="ink-link text-[13.5px] text-ink-soft">
               {l.label}
             </a>
           ))}
         </div>
 
-        <div className="hidden items-center gap-2 md:flex">
-          <Link
-            href="/app"
-            className="rounded-lg px-3.5 py-2 text-sm font-medium text-zinc-300 transition-colors hover:text-white"
-          >
+        <div className="hidden items-center gap-6 md:flex">
+          <Link href="/app" className="ink-link text-[13.5px] text-ink-soft">
             Sign in
           </Link>
           <Link
             href="/app"
-            className="group relative rounded-lg px-4 py-2 text-sm font-semibold text-white transition-transform active:scale-[0.98]"
-            style={{
-              background: 'linear-gradient(120deg, #7c3aed, #6366f1)',
-              boxShadow: '0 8px 24px -8px rgba(124,58,237,0.7)',
-            }}
+            className="group inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper transition-colors hover:bg-ink-soft"
           >
             Launch app
+            <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
           </Link>
         </div>
 
-        {/* Mobile toggle */}
         <button
           aria-label="Toggle menu"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-300 transition-colors hover:bg-white/5 md:hidden"
+          className="flex h-9 w-9 items-center justify-center md:hidden"
         >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             {open ? (
-              <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
             ) : (
-              <path d="M2.5 5h13M2.5 9h13M2.5 13h13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
             )}
           </svg>
         </button>
       </nav>
 
-      {/* Mobile menu */}
       {open && (
-        <div
-          className="absolute inset-x-4 top-[68px] z-50 rounded-2xl p-3 md:hidden"
-          style={{
-            background: 'rgba(12,12,18,0.95)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            backdropFilter: 'blur(16px)',
-          }}
-        >
-          <div className="flex flex-col">
+        <div className="border-t border-line bg-paper px-5 py-4 md:hidden">
+          <div className="flex flex-col divide-y divide-line">
             {NAV_LINKS.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"
+                className="py-3 text-[15px] text-ink-soft"
               >
                 {l.label}
               </a>
             ))}
-            <Link
-              href="/app"
-              onClick={() => setOpen(false)}
-              className="mt-2 rounded-lg px-4 py-2.5 text-center text-sm font-semibold text-white"
-              style={{ background: 'linear-gradient(120deg, #7c3aed, #6366f1)' }}
-            >
-              Launch app
-            </Link>
           </div>
+          <Link
+            href="/app"
+            onClick={() => setOpen(false)}
+            className="mt-4 block rounded-full bg-ink px-4 py-2.5 text-center text-sm font-medium text-paper"
+          >
+            Launch app →
+          </Link>
         </div>
       )}
     </header>

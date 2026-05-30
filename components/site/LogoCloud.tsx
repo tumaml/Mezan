@@ -1,33 +1,17 @@
-const COMPANIES = [
-  'Northwind',
-  'Lumen Labs',
-  'Acme Corp',
-  'Voltaic',
-  'Meridian',
-  'Cobalt',
-  'Everpeak',
-  'Helios',
-];
+const COMPANIES = ['Northwind', 'Lumen', 'Voltaic', 'Meridian', 'Everpeak', 'Helios'];
 
 export function LogoCloud() {
   return (
-    <section className="relative px-4 py-14">
-      <p className="text-center text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">
-        Trusted by people teams at fast-growing companies
-      </p>
-
-      <div
-        className="relative mx-auto mt-8 max-w-5xl overflow-hidden"
-        style={{
-          maskImage: 'linear-gradient(to right, transparent, black 12%, black 88%, transparent)',
-          WebkitMaskImage: 'linear-gradient(to right, transparent, black 12%, black 88%, transparent)',
-        }}
-      >
-        <div className="flex w-max animate-marquee items-center gap-14">
-          {[...COMPANIES, ...COMPANIES].map((name, i) => (
+    <section className="px-5 py-16 sm:px-8">
+      <div className="mx-auto max-w-6xl">
+        <p className="text-center font-mono text-[11px] uppercase tracking-[0.18em] text-faint">
+          Trusted by people teams at growing companies
+        </p>
+        <div className="mt-8 grid grid-cols-2 items-center justify-items-center gap-y-6 border-y border-line py-8 sm:grid-cols-3 md:grid-cols-6 md:divide-x md:divide-line">
+          {COMPANIES.map((name) => (
             <span
-              key={i}
-              className="select-none whitespace-nowrap text-lg font-semibold tracking-tight text-zinc-500 transition-colors hover:text-zinc-300"
+              key={name}
+              className="font-display w-full text-center text-lg font-medium tracking-tight text-ink/55"
             >
               {name}
             </span>

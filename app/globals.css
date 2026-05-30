@@ -2,127 +2,94 @@
 
 @theme {
   --font-sans: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-display: var(--font-display), Georgia, 'Times New Roman', serif;
   --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --color-ink: #08080c;
-  --color-ink-soft: #0d0d14;
-  --color-accent: #8b5cf6;
-  --color-accent-2: #22d3ee;
-  --color-accent-3: #f59e0b;
+  /* Warm paper / ink editorial palette */
+  --color-paper: #f4f2eb;
+  --color-paper-2: #efece3;
+  --color-ink: #1a1916;
+  --color-ink-soft: #2c2a25;
+  --color-muted: #76736a;
+  --color-faint: #a39f93;
+  --color-line: #1a191620;
+  --color-accent: #ad4f1e; /* burnt amber */
 }
 
 * { box-sizing: border-box; }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 6rem;
+  scroll-padding-top: 7rem;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 body {
   font-family: var(--font-sans);
-  background: #08080c;
-  color: #e4e4e7;
+  background: #f4f2eb;
+  color: #1a1916;
+  font-feature-settings: "ss01", "cv01";
 }
 
-::selection { background: rgba(139, 92, 246, 0.35); color: #fff; }
+::selection { background: #1a1916; color: #f4f2eb; }
 
-::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar { width: 11px; height: 11px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); background-clip: padding-box; }
+::-webkit-scrollbar-thumb {
+  background: #1a191625; border-radius: 999px;
+  border: 3px solid transparent; background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: #1a191645; background-clip: padding-box; }
 
-select option { background: #18181b; color: #e4e4e7; }
-
+select option { background: #fff; color: #1a1916; }
 .z-60 { z-index: 60; }
 
-/* ---------- Reusable visual primitives ---------- */
+/* ---------- Editorial primitives ---------- */
 
-.gradient-text {
-  background: linear-gradient(100deg, #ffffff 0%, #c4b5fd 38%, #67e8f9 72%, #ffffff 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.font-display { font-family: var(--font-display); }
+
+/* Eyebrow / kicker label */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent);
 }
 
-.text-glow { text-shadow: 0 0 40px rgba(139, 92, 246, 0.35); }
+/* Hairline divider */
+.rule { height: 1px; background: var(--color-line); border: 0; }
 
-/* Soft card surface used across sections */
-.surface {
-  background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 1.25rem;
-  backdrop-filter: blur(8px);
+/* Editorial link underline that grows on hover */
+.ink-link {
+  position: relative;
+  color: var(--color-ink);
+  text-decoration: none;
 }
+.ink-link::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 100%; height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s cubic-bezier(.2,.7,.2,1);
+}
+.ink-link:hover::after { transform: scaleX(1); }
 
-.surface-hover {
-  transition: transform .35s cubic-bezier(.2,.7,.2,1), border-color .35s, background .35s;
+/* Subtle paper grain so flat areas don't feel sterile */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
 }
-.surface-hover:hover {
-  transform: translateY(-4px);
-  border-color: rgba(139,92,246,0.4);
-  background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
-}
-
-/* Dotted grid backdrop */
-.bg-dotgrid {
-  background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 26px 26px;
-}
-
-/* Faint line grid */
-.bg-linegrid {
-  background-image:
-    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 64px 64px;
-}
-
-/* ---------- Animations ---------- */
-
-@keyframes aurora {
-  0%   { transform: translate3d(-8%, -6%, 0) scale(1); }
-  50%  { transform: translate3d(8%, 6%, 0) scale(1.15); }
-  100% { transform: translate3d(-8%, -6%, 0) scale(1); }
-}
-.animate-aurora { animation: aurora 18s ease-in-out infinite; }
-
-@keyframes aurora-2 {
-  0%   { transform: translate3d(6%, 4%, 0) scale(1.1); }
-  50%  { transform: translate3d(-6%, -4%, 0) scale(1); }
-  100% { transform: translate3d(6%, 4%, 0) scale(1.1); }
-}
-.animate-aurora-2 { animation: aurora-2 22s ease-in-out infinite; }
-
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.animate-marquee { animation: marquee 32s linear infinite; }
-
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-10px); }
-}
-.animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
-
-@keyframes shimmer {
-  0%   { background-position: 200% center; }
-  100% { background-position: -200% center; }
-}
-.animate-shimmer { animation: shimmer 6s linear infinite; }
-
-@keyframes pulse-ring {
-  0%   { box-shadow: 0 0 0 0 rgba(139,92,246,0.45); }
-  70%  { box-shadow: 0 0 0 12px rgba(139,92,246,0); }
-  100% { box-shadow: 0 0 0 0 rgba(139,92,246,0); }
-}
-.animate-pulse-ring { animation: pulse-ring 2.6s ease-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .animate-aurora, .animate-aurora-2, .animate-marquee,
-  .animate-float-slow, .animate-shimmer, .animate-pulse-ring { animation: none; }
 }
