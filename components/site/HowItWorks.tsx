@@ -4,41 +4,44 @@ import { SectionHeading } from './SectionHeading';
 const STEPS = [
   {
     n: '1',
-    title: 'Import your people',
-    body: 'Upload a CSV, sync your HRIS, or start from a blank canvas. Mezan drafts the first version of your chart in seconds.',
+    title: 'Dump your people in',
+    body: 'CSV, HRIS sync, or a blank canvas. Mezan drafts the first version of your chart in seconds flat.',
   },
   {
     n: '2',
-    title: 'Shape the structure',
-    body: 'Drag to re-org, add roles, split departments. Every change recalculates headcount and reporting lines instantly.',
+    title: 'Drag it into shape',
+    body: 'Re-org by hand, add roles, split teams. Every move recalculates headcount and reporting lines instantly.',
   },
   {
     n: '3',
-    title: 'Share and decide',
-    body: 'Send a link or embed the chart. Everyone sees one source of truth — and you plan the next move with confidence.',
+    title: 'Ship the link',
+    body: 'Send or embed it. Everyone sees one source of truth — and you make the next call with actual confidence.',
   },
 ];
 
 export function HowItWorks() {
   return (
-    <section id="how" className="scroll-mt-24 px-5 py-24 sm:px-8">
+    <section id="how" className="scroll-mt-24 bd-t bd-b bg-ink px-3 py-20 text-bone sm:px-5">
       <div className="mx-auto max-w-6xl">
-        <SectionHeading
-          index="§ 02"
-          kicker="How it works"
-          title={<>From spreadsheet chaos to clarity, in three moves.</>}
-          align="center"
-        />
+        <Reveal y={0}>
+          <div className="flex items-center gap-2">
+            <span className="bd bg-bone px-2 py-0.5 font-mono text-[11px] font-bold uppercase text-ink">§02</span>
+            <span className="kicker bd bg-lime px-2 py-1 text-ink">How it works</span>
+          </div>
+        </Reveal>
+        <Reveal delay={0.05}>
+          <h2 className="font-display mt-5 max-w-4xl text-[clamp(2.4rem,6vw,4.6rem)] uppercase leading-[0.9]">
+            Chaos in. Clarity out. Three moves.
+          </h2>
+        </Reveal>
 
-        <div className="mt-16 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3">
+        <div className="mt-12 grid gap-3 md:grid-cols-3">
           {STEPS.map((s, i) => (
             <Reveal key={s.n} delay={i * 0.08}>
-              <div className="h-full bg-paper p-8">
-                <span className="font-display text-5xl font-medium leading-none text-ink/15">
-                  0{s.n}
-                </span>
-                <h3 className="font-display mt-6 text-xl font-medium text-ink">{s.title}</h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-muted">{s.body}</p>
+              <div className="h-full bd bg-bone p-7 text-ink">
+                <span className="font-display block text-[5rem] leading-[0.8] text-blue">0{s.n}</span>
+                <h3 className="font-display mt-5 text-2xl uppercase">{s.title}</h3>
+                <p className="mt-3 text-[15px] font-medium leading-snug">{s.body}</p>
               </div>
             </Reveal>
           ))}

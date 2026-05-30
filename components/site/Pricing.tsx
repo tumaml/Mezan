@@ -21,7 +21,7 @@ const PLANS: Plan[] = [
     blurb: 'For small teams getting organized.',
     monthly: 0,
     yearly: 0,
-    cta: 'Start for free',
+    cta: 'Start free',
     features: ['Up to 25 people', 'Interactive canvas', 'Search & filters', 'CSV import'],
   },
   {
@@ -29,15 +29,9 @@ const PLANS: Plan[] = [
     blurb: 'For scaling companies that plan ahead.',
     monthly: 8,
     yearly: 6,
-    cta: 'Start free trial',
+    cta: 'Start trial',
     featured: true,
-    features: [
-      'Unlimited people',
-      'Real-time HRIS sync',
-      'Headcount & span insights',
-      'Roles & permissions',
-      'Shareable & embeddable links',
-    ],
+    features: ['Unlimited people', 'Real-time HRIS sync', 'Headcount & span insights', 'Roles & permissions', 'Shareable & embeddable links'],
   },
   {
     name: 'Enterprise',
@@ -53,81 +47,74 @@ export function Pricing() {
   const [yearly, setYearly] = useState(true);
 
   return (
-    <section id="pricing" className="scroll-mt-24 px-5 py-24 sm:px-8">
+    <section id="pricing" className="scroll-mt-24 px-3 py-20 sm:px-5">
       <div className="mx-auto max-w-6xl">
-        <div className="flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-end">
-          <SectionHeading
-            index="§ 03"
-            kicker="Pricing"
-            title={<>Simple pricing that scales with you.</>}
-          />
+        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+          <SectionHeading index="§03" kicker="Pricing" title={<>Pay for<br />people. Not seats of pain.</>} />
 
-          {/* text toggle */}
-          <div className="flex items-center gap-1 rounded-full border border-line p-1 font-mono text-[12px]">
+          <div className="flex bd bg-bone font-mono text-[12px] font-bold uppercase">
             <button
               onClick={() => setYearly(false)}
-              className={`rounded-full px-3 py-1.5 transition-colors ${!yearly ? 'bg-ink text-paper' : 'text-muted hover:text-ink'}`}
+              className={`px-4 py-2 transition-colors ${!yearly ? 'bg-ink text-bone' : ''}`}
             >
               Monthly
             </button>
             <button
               onClick={() => setYearly(true)}
-              className={`rounded-full px-3 py-1.5 transition-colors ${yearly ? 'bg-ink text-paper' : 'text-muted hover:text-ink'}`}
+              className={`border-l-2 border-ink px-4 py-2 transition-colors ${yearly ? 'bg-ink text-bone' : ''}`}
             >
-              Yearly <span className={yearly ? 'text-paper/70' : 'text-accent'}>−25%</span>
+              Yearly <span className={yearly ? 'text-lime' : 'text-coral'}>-25%</span>
             </button>
           </div>
         </div>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-xl border border-line bg-line lg:grid-cols-3">
+        <div className="mt-12 grid gap-3 lg:grid-cols-3">
           {PLANS.map((plan, i) => {
             const price = yearly ? plan.yearly : plan.monthly;
             return (
               <Reveal key={plan.name} delay={i * 0.06} className="h-full">
-                <div className={`flex h-full flex-col p-8 ${plan.featured ? 'bg-ink text-paper' : 'bg-paper'}`}>
+                <div className={`flex h-full flex-col bd shadowed p-7 ${plan.featured ? 'bg-blue text-bone' : 'bg-paper'}`}>
                   <div className="flex items-center justify-between">
-                    <h3 className={`font-display text-xl font-medium ${plan.featured ? 'text-paper' : 'text-ink'}`}>
-                      {plan.name}
-                    </h3>
+                    <h3 className="font-display text-3xl uppercase">{plan.name}</h3>
                     {plan.featured && (
-                      <span className="rounded-full bg-accent px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-white">
+                      <span className="bd bg-lime px-2 py-0.5 font-mono text-[10px] font-bold uppercase text-ink">
                         Popular
                       </span>
                     )}
                   </div>
-                  <p className={`mt-2 text-[14px] ${plan.featured ? 'text-paper/60' : 'text-muted'}`}>{plan.blurb}</p>
+                  <p className={`mt-2 text-[14px] font-medium ${plan.featured ? 'text-bone/70' : 'text-muted'}`}>
+                    {plan.blurb}
+                  </p>
 
-                  <div className="mt-7 flex items-baseline gap-1.5">
+                  <div className="mt-6 flex items-baseline gap-2">
                     {price < 0 ? (
-                      <span className="font-display text-4xl font-medium">Custom</span>
+                      <span className="font-display text-6xl leading-none">POA</span>
                     ) : (
                       <>
-                        <span className="font-display text-4xl font-medium tracking-tight">${price}</span>
-                        <span className={`text-[13px] ${plan.featured ? 'text-paper/50' : 'text-faint'}`}>
-                          / user / mo
+                        <span className="font-display text-6xl leading-none">${price}</span>
+                        <span className={`font-mono text-[12px] uppercase ${plan.featured ? 'text-bone/60' : 'text-muted'}`}>
+                          /user/mo
                         </span>
                       </>
                     )}
                   </div>
-                  <p className={`mt-1.5 h-4 font-mono text-[11px] ${plan.featured ? 'text-paper/50' : 'text-faint'}`}>
-                    {price > 0 && yearly ? 'billed annually' : price === 0 ? 'free forever' : ''}
+                  <p className={`mt-2 h-4 font-mono text-[11px] uppercase ${plan.featured ? 'text-bone/60' : 'text-muted'}`}>
+                    {price > 0 && yearly ? 'billed annually' : price === 0 ? 'free forever' : 'custom quote'}
                   </p>
 
                   <Link
                     href={plan.name === 'Enterprise' ? '#contact' : '/app'}
-                    className={`mt-7 rounded-full px-5 py-3 text-center text-[14px] font-medium transition-colors ${
-                      plan.featured
-                        ? 'bg-paper text-ink hover:bg-white'
-                        : 'border border-ink text-ink hover:bg-ink hover:text-paper'
+                    className={`mt-6 bd px-5 py-3 text-center font-mono text-[12px] font-bold uppercase tracking-widest lift ${
+                      plan.featured ? 'bg-lime text-ink' : 'bg-ink text-bone'
                     }`}
                   >
-                    {plan.cta}
+                    {plan.cta} ↗
                   </Link>
 
-                  <ul className="mt-8 space-y-3.5">
+                  <ul className="mt-7 space-y-3">
                     {plan.features.map((f) => (
-                      <li key={f} className={`flex items-start gap-3 text-[14px] ${plan.featured ? 'text-paper/85' : 'text-ink-soft'}`}>
-                        <span className={plan.featured ? 'text-accent' : 'text-accent'}>→</span>
+                      <li key={f} className="flex items-start gap-2.5 text-[14px] font-medium">
+                        <span className={plan.featured ? 'text-lime' : 'text-blue'}>✦</span>
                         {f}
                       </li>
                     ))}

@@ -4,61 +4,69 @@ import { SectionHeading } from './SectionHeading';
 const FEATURES = [
   {
     n: '01',
-    title: 'An infinite, interactive canvas',
-    body: 'Pan, zoom, collapse branches, and focus a single team. Your whole organization on one calm, fast surface — no more screenshots of stale slides.',
+    title: 'Infinite canvas',
+    body: 'Pan, zoom, collapse, focus. Your entire org on one fast, draggable surface. No more screenshots of stale slides.',
+    fill: 'bg-paper',
   },
   {
     n: '02',
-    title: 'Search that actually finds people',
-    body: 'Type a name, role, or department and jump straight to their place in the structure. Answers in milliseconds, not Slack threads.',
+    title: 'Search that hits',
+    body: 'Name, role, department — type it and teleport straight to their box. Answers in milliseconds, not Slack threads.',
+    fill: 'bg-lime',
   },
   {
     n: '03',
-    title: 'Headcount you can plan against',
-    body: 'Live counts by team, span-of-control, and open roles. Planning decisions grounded in the real shape of the company.',
+    title: 'Headcount, live',
+    body: 'Counts by team, span-of-control, open roles. Plan against the real shape of the company, not a guess.',
+    fill: 'bg-paper',
   },
   {
     n: '04',
-    title: 'Real-time sync with your HRIS',
-    body: 'Connect once. Hires, moves, and exits flow into the chart automatically, so the map is never out of date.',
+    title: 'HRIS sync',
+    body: 'Connect once. Hires, moves and exits flow in automatically. The map is never, ever out of date.',
+    fill: 'bg-blue text-bone',
   },
   {
     n: '05',
-    title: 'Roles, permissions, and trust',
-    body: 'Granular access keeps sensitive data private while everyone still sees the structure they need to do their job.',
+    title: 'Roles & access',
+    body: 'Granular permissions keep the sensitive stuff private while everyone still sees the structure they need.',
+    fill: 'bg-paper',
+  },
+  {
+    n: '06',
+    title: 'Share anywhere',
+    body: 'Read-only links and live embeds. Drop the org chart into your wiki and it stays current forever.',
+    fill: 'bg-paper',
   },
 ];
 
 export function Features() {
   return (
-    <section id="features" className="scroll-mt-24 px-5 py-24 sm:px-8">
-      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-        <div className="lg:sticky lg:top-28 lg:self-start">
-          <SectionHeading
-            index="§ 01"
-            kicker="Why Mezan"
-            title={<>Everything you need to map a team — and nothing you don&apos;t.</>}
-            subtitle="From a five-person startup to a five-thousand-person enterprise, the structure stays accurate, searchable, and calm to look at."
-          />
-        </div>
+    <section id="features" className="scroll-mt-24 px-3 py-20 sm:px-5">
+      <div className="mx-auto max-w-6xl">
+        <SectionHeading
+          index="§01"
+          kicker="What you get"
+          title={<>Six reasons it<br />doesn&apos;t suck.</>}
+          subtitle="From a five-person startup to a five-thousand-person beast, the structure stays accurate, searchable, and fast."
+        />
 
-        <ul className="border-t border-line">
+        <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f, i) => (
-            <Reveal as="li" key={f.n} delay={i * 0.04}>
-              <div className="group grid grid-cols-[auto_1fr] gap-5 border-b border-line py-7 transition-colors sm:gap-8">
-                <span className="font-mono text-[13px] text-faint transition-colors group-hover:text-accent">
-                  {f.n}
-                </span>
-                <div>
-                  <h3 className="font-display text-[22px] font-medium leading-snug text-ink">
-                    {f.title}
-                  </h3>
-                  <p className="mt-2.5 max-w-lg text-[15px] leading-relaxed text-muted">{f.body}</p>
+            <Reveal key={f.n} delay={(i % 3) * 0.06}>
+              <div className={`group flex h-full flex-col bd shadowed ${f.fill} p-6 lift`}>
+                <div className="flex items-baseline justify-between">
+                  <span className="font-display text-5xl leading-none">{f.n}</span>
+                  <span className="font-mono text-[11px] uppercase tracking-widest opacity-50 transition-opacity group-hover:opacity-100">
+                    ↗
+                  </span>
                 </div>
+                <h3 className="font-display mt-6 text-2xl uppercase leading-none">{f.title}</h3>
+                <p className="mt-3 text-[14.5px] font-medium leading-snug">{f.body}</p>
               </div>
             </Reveal>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );

@@ -1,23 +1,22 @@
 import type { Metadata } from 'next';
-import { Inter, Fraunces, Geist_Mono } from 'next/font/google';
+import { Space_Grotesk, Anton, Space_Mono } from 'next/font/google';
 import './globals.css';
 
-const inter = Inter({
+const grotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-sans',
   display: 'swap',
 });
 
-// Editorial display serif with optical sizing — used for headlines only.
-const fraunces = Fraunces({
+const anton = Anton({
+  weight: '400',
   subsets: ['latin'],
   variable: '--font-display',
   display: 'swap',
-  style: ['normal', 'italic'],
-  axes: ['opsz', 'SOFT'],
 });
 
-const geistMono = Geist_Mono({
+const mono = Space_Mono({
+  weight: ['400', '700'],
   subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
@@ -26,24 +25,24 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://mezan.app'),
   title: {
-    default: 'Mezan — Org clarity, by design',
-    template: '%s · Mezan',
+    default: 'MEZAN — See everyone. Move fast.',
+    template: '%s · MEZAN',
   },
   description:
-    'Mezan turns your headcount, roles, and reporting lines into a living, accurate map of who does what — and how it all fits together.',
+    'Mezan is the org chart that fights back. Drag your people into place, watch the lines snap, and finally see how the whole company actually fits together.',
   keywords: ['org chart', 'organization design', 'people operations', 'workforce planning', 'team structure'],
   authors: [{ name: 'Mezan' }],
   openGraph: {
-    title: 'Mezan — Org clarity, by design',
-    description: 'A living, accurate map of who does what — and how it all fits together.',
+    title: 'MEZAN — See everyone. Move fast.',
+    description: 'The org chart that fights back. Drag your people into place and watch the lines snap.',
     url: 'https://mezan.app',
     siteName: 'Mezan',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Mezan — Org clarity, by design',
-    description: 'A living, accurate map of who does what — and how it all fits together.',
+    title: 'MEZAN — See everyone. Move fast.',
+    description: 'The org chart that fights back.',
   },
 };
 
@@ -55,9 +54,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${fraunces.variable} ${geistMono.variable} antialiased`}
+      className={`${grotesk.variable} ${anton.variable} ${mono.variable} antialiased`}
     >
-      <body className="min-h-screen bg-paper text-ink">{children}</body>
+      <body className="min-h-screen bg-bone text-ink">{children}</body>
     </html>
   );
 }

@@ -1,21 +1,24 @@
-const COMPANIES = ['Northwind', 'Lumen', 'Voltaic', 'Meridian', 'Everpeak', 'Helios'];
+const ROW = ['NORTHWIND', 'LUMEN', 'VOLTAIC', 'MERIDIAN', 'EVERPEAK', 'HELIOS', 'COBALT', 'ACME'];
 
 export function LogoCloud() {
   return (
-    <section className="px-5 py-16 sm:px-8">
-      <div className="mx-auto max-w-6xl">
-        <p className="text-center font-mono text-[11px] uppercase tracking-[0.18em] text-faint">
-          Trusted by people teams at growing companies
+    <section className="mt-3 px-3 sm:px-5">
+      <div className="mx-auto max-w-6xl bd bg-ink py-5 text-bone">
+        <p className="px-5 font-mono text-[11px] uppercase tracking-[0.2em] text-bone/50">
+          ／ trusted by people teams shipping fast
         </p>
-        <div className="mt-8 grid grid-cols-2 items-center justify-items-center gap-y-6 border-y border-line py-8 sm:grid-cols-3 md:grid-cols-6 md:divide-x md:divide-line">
-          {COMPANIES.map((name) => (
-            <span
-              key={name}
-              className="font-display w-full text-center text-lg font-medium tracking-tight text-ink/55"
-            >
-              {name}
-            </span>
-          ))}
+        <div className="mt-3 flex overflow-hidden">
+          <div className="flex w-max animate-marquee">
+            {[...ROW, ...ROW].map((n, i) => (
+              <span
+                key={i}
+                className="font-display mx-7 text-4xl uppercase tracking-tight text-transparent sm:text-5xl"
+                style={{ WebkitTextStroke: '1.5px #e9e6dc' }}
+              >
+                {n}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </section>

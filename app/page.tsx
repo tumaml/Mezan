@@ -1,3 +1,4 @@
+import { Cursor } from '@/components/site/Cursor';
 import { Navbar } from '@/components/site/Navbar';
 import { Hero } from '@/components/site/Hero';
 import { LogoCloud } from '@/components/site/LogoCloud';
@@ -13,6 +14,7 @@ import { Footer } from '@/components/site/Footer';
 export default function HomePage() {
   return (
     <div className="relative min-h-screen overflow-x-hidden">
+      <Cursor />
       <Navbar />
       <main>
         <Hero />
